@@ -31,6 +31,7 @@ export default function AboutPage() {
               src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000&auto=format&fit=crop"
               alt="GUAF1Y Artist Silhouette"
               fill
+              sizes="(max-width: 1024px) 100vw, 500px"
               className="object-cover"
             />
           </div>

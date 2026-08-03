@@ -27,14 +27,30 @@
   }
 
   /* Minimum touch target size (WCAG 2.1 AA) */
-  button, a, [role="button"] {
+  button, a, [role="button"], input, select, textarea {
     min-height: 44px;
-    min-width: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Visible focus outlines for keyboard navigation accessibility */
+  *:focus-visible {
+    outline: 2px solid #D4AF37 !important;
+    outline-offset: 2px !important;
   }
 
   /* Remove iOS tap highlight */
   * {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Respect user preference for reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   /* Custom subtle scrollbar (desktop only) */

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node -e \"if(require('fs').existsSync('public/manifest.webmanifest'))require('fs').unlinkSync('public/manifest.webmanifest')\" && next build",
     "start": "next start",
     "lint": "next lint"
   },

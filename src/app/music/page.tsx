@@ -37,6 +37,7 @@ export default function MusicPage() {
                 alt={MINI_EP_INFO.title}
                 fill
                 priority
+                sizes="(max-width: 640px) 256px, 288px"
                 className="object-cover"
               />
             </div>

@@ -104,6 +104,7 @@ export const PersistentPlayer: React.FC = () => {
                 src={currentTrack.coverUrl}
                 alt={currentTrack.title}
                 fill
+                sizes="(max-width: 768px) 256px, 300px"
                 className={`object-cover transition-transform duration-700 ${isPlaying ? 'scale-105' : 'scale-100'}`}
               />
               {/* Glowing accent overlay when playing */}
@@ -275,6 +276,7 @@ export const PersistentPlayer: React.FC = () => {
                 src={currentTrack.coverUrl}
                 alt={currentTrack.title}
                 fill
+                sizes="44px"
                 className={`object-cover transition-transform duration-500 ${isPlaying ? 'scale-105' : 'scale-100'}`}
               />
             </div>

@@ -154,6 +154,7 @@ export default function HomePage() {
                     alt={MINI_EP_INFO.title}
                     fill
                     priority
+                    sizes="(max-width: 640px) 256px, (max-width: 1024px) 320px, 384px"
                     className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent p-6 flex flex-col justify-end">
@@ -311,6 +312,7 @@ export default function HomePage() {
                   src={item.imageUrl}
                   alt={item.title}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent p-4 flex flex-col justify-end">

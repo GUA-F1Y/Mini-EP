@@ -18,7 +18,11 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: 'GUAF1Y — JERSEY_MU.. (Official Mini EP Portal)',
+  metadataBase: new URL('https://guaf1y.vercel.app'),
+  title: {
+    default: 'GUAF1Y — JERSEY_MU.. (Official Mini EP Portal)',
+    template: '%s | GUAF1Y Official',
+  },
   description:
     'Official Artist Portal for JERSEY_MU.. Mini EP by GUAF1Y. Experience cinematic Jersey Club tracks, live audio visualizer, lyrics, gallery, and interactive fan wall.',
   keywords: [
@@ -32,9 +36,23 @@ export const metadata: Metadata = {
     'Artist Portal',
   ],
   authors: [{ name: 'GUAF1Y' }],
+  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    shortcut: '/icon.svg',
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'GUAF1Y — JERSEY_MU.. (Official Mini EP)',
-    description: 'Immersive digital experience for the new 3-track Jersey Club Mini EP.',
+    description: 'Immersive digital experience for the new 3-track Jersey Club Mini EP by GUAF1Y.',
     url: 'https://guaf1y.vercel.app',
     siteName: 'GUAF1Y Official',
     images: [
@@ -59,10 +77,24 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   themeColor: '#090909',
   viewportFit: 'cover',
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'MusicAlbum',
+  name: 'JERSEY_MU..',
+  byArtist: {
+    '@type': 'MusicGroup',
+    name: 'GUAF1Y',
+  },
+  genre: 'Jersey Club / Electronic',
+  numTracks: 3,
+  description: 'Official Mini EP by GUAF1Y featuring cinematic Jersey Club electronic soundscapes.',
+  url: 'https://guaf1y.vercel.app',
 };
 
 export default function RootLayout({
@@ -72,6 +104,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`dark ${inter.variable} ${syne.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-screen bg-background text-foreground flex flex-col selection:bg-accent selection:text-background bg-noise antialiased">
         <IntroScreen />
         <Navbar />

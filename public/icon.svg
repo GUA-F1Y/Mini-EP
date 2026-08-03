@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <rect width="512" height="512" rx="128" fill="#090909"/>
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#D4AF37" stroke-width="12" stroke-opacity="0.3"/>
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#D4AF37" stroke-width="8" stroke-opacity="0.2"/>
+  
+  <!-- Sleek Flat Geometric G & Vinyl Stylized Mark -->
+  <path d="M 340 180 
+           C 300 120, 200 120, 160 180 
+           C 115 240, 115 310, 160 360 
+           C 200 410, 300 410, 340 360 
+           C 365 330, 370 290, 370 250 
+           L 256 250 
+           L 256 300 
+           L 320 300 
+           C 315 330, 285 355, 250 355 
+           C 195 355, 175 305, 185 255 
+           C 195 205, 275 175, 325 210 
+           Z" 
+        fill="#D4AF37"/>
+  <circle cx="256" cy="250" r="16" fill="#D4AF37"/>
+</svg>

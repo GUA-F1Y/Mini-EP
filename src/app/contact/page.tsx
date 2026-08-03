@@ -117,12 +117,14 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-muted uppercase mb-1">
+                    <label htmlFor="contact-name" className="block text-xs font-mono text-muted uppercase mb-1">
                       Full Name *
                     </label>
                     <input
+                      id="contact-name"
                       type="text"
                       required
+                      autoComplete="name"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="e.g. Sarah Jenkins"
@@ -131,12 +133,14 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-muted uppercase mb-1">
+                    <label htmlFor="contact-email" className="block text-xs font-mono text-muted uppercase mb-1">
                       Email Address *
                     </label>
                     <input
+                      id="contact-email"
                       type="email"
                       required
+                      autoComplete="email"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       placeholder="sarah@agency.com"
@@ -147,10 +151,11 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-mono text-muted uppercase mb-1">
+                    <label htmlFor="contact-type" className="block text-xs font-mono text-muted uppercase mb-1">
                       Inquiry Type
                     </label>
                     <select
+                      id="contact-type"
                       value={form.type}
                       onChange={(e) => setForm({ ...form, type: e.target.value })}
                       className="w-full bg-background border border-surface rounded-xl px-4 py-3 text-xs text-foreground focus:outline-none focus:border-accent"
@@ -163,12 +168,14 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-muted uppercase mb-1">
+                    <label htmlFor="contact-subject" className="block text-xs font-mono text-muted uppercase mb-1">
                       Subject *
                     </label>
                     <input
+                      id="contact-subject"
                       type="text"
                       required
+                      autoComplete="off"
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
                       placeholder="e.g. Festival Performance 2026"
@@ -178,10 +185,11 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-muted uppercase mb-1">
+                  <label htmlFor="contact-message" className="block text-xs font-mono text-muted uppercase mb-1">
                     Message Details *
                   </label>
                   <textarea
+                    id="contact-message"
                     rows={5}
                     required
                     value={form.message}
@@ -194,7 +202,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 rounded-xl bg-accent text-background font-bold font-mono text-xs hover:bg-accent-hover transition-colors flex items-center justify-center gap-2 shadow-lg shadow-accent/20"
+                  className="w-full py-4 rounded-xl bg-accent text-background font-bold font-mono text-xs hover:bg-accent-hover transition-colors flex items-center justify-center gap-2 shadow-lg shadow-accent/20 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <Send className="w-4 h-4" />
                   {loading ? 'TRANSMITTING TO SUPABASE...' : 'SUBMIT OFFICIAL INQUIRY'}

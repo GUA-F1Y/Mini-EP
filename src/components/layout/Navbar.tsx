@@ -108,8 +108,8 @@ export const Navbar: React.FC = () => {
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden flex items-center justify-center w-10 h-10 text-muted hover:text-foreground rounded-xl bg-surface/60 border border-surface"
-            aria-label="Toggle menu"
+            className="lg:hidden flex items-center justify-center w-11 h-11 text-muted hover:text-foreground rounded-xl bg-surface/60 border border-surface min-h-[44px] min-w-[44px]"
+            aria-label="Toggle navigation menu"
             aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
