@@ -125,7 +125,7 @@ export default function FanWallPage() {
                   </div>
 
                   <p className="text-xs text-muted/90 leading-relaxed font-sans italic">
-                    "{msg.message}"
+                    &quot;{msg.message}&quot;
                   </p>
                 </div>
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Play, Disc, Music, Download, Share2, Sparkles, Check } from 'lucide-react';
+import { Play, Music, Share2, Sparkles, Check } from 'lucide-react';
 import { MINI_EP_INFO, MOCK_TRACKS } from '@/lib/audio/mockTracks';
 import { useAudioStore } from '@/stores/useAudioStore';
 import { TrackRow } from '@/components/audio/TrackRow';
@@ -10,7 +10,7 @@ import { AudioVisualizer } from '@/components/audio/AudioVisualizer';
 import { PageTransition } from '@/components/layout/PageTransition';
 
 export default function MusicPage() {
-  const { playTrack, isPlaying, currentTrackIndex, togglePlay } = useAudioStore();
+  const { playTrack } = useAudioStore();
   const [copiedShare, setCopiedShare] = React.useState(false);
 
   const handleShare = () => {

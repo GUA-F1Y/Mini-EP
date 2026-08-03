@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
+import { TablesInsert } from '@/lib/supabase/types';
 import { FanMessage } from '@/types';
 import { MOCK_FAN_MESSAGES } from '@/lib/audio/mockTracks';
 
@@ -40,15 +41,17 @@ export const fanWallService = {
     }
 
     try {
+      const newMessage: TablesInsert<'fan_messages'> = {
+        name: name.trim() || 'Anonymous Fan',
+        location: location.trim() || 'Worldwide',
+        message: message.trim(),
+        likes_count: 1,
+        is_approved: true,
+      };
+
       const { data, error } = await supabase
         .from('fan_messages')
-        .insert({
-          name: name.trim() || 'Anonymous Fan',
-          location: location.trim() || 'Worldwide',
-          message: message.trim(),
-          likes_count: 1,
-          is_approved: true,
-        })
+        .insert(newMessage)
         .select()
         .single();
 
@@ -90,3 +93,4 @@ export const fanWallService = {
     }
   },
 };
+

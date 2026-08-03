@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Award, Disc, Sparkles } from 'lucide-react';
+import { Award, Sparkles } from 'lucide-react';
 import { MOCK_CREDITS, MINI_EP_INFO } from '@/lib/audio/mockTracks';
 import { PageTransition } from '@/components/layout/PageTransition';
 

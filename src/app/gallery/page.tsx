@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Camera, X, Maximize2, Sparkles } from 'lucide-react';
+import { Camera, X, Maximize2 } from 'lucide-react';
 import { MOCK_GALLERY } from '@/lib/audio/mockTracks';
 import { GalleryItem } from '@/types';
 import { PageTransition } from '@/components/layout/PageTransition';

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { FileText, Play, Pause, Copy, Check, Music, Disc } from 'lucide-react';
+import { FileText, Play, Pause, Copy, Check, Disc } from 'lucide-react';
 import { MOCK_TRACKS } from '@/lib/audio/mockTracks';
 import { useAudioStore } from '@/stores/useAudioStore';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -13,7 +13,6 @@ export default function LyricsPage() {
     setCurrentTrackIndex,
     isPlaying,
     playTrack,
-    togglePlay,
   } = useAudioStore();
 
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);

@@ -8,7 +8,6 @@ import {
   MessageSquare,
   Mail,
   Trash2,
-  CheckCircle,
   TrendingUp,
   Users,
 } from 'lucide-react';
@@ -163,7 +162,7 @@ export default function AdminPage() {
                       <span className="font-bold text-foreground text-xs">{msg.name}</span>
                       <span className="text-[10px] font-mono text-accent">({msg.location})</span>
                     </div>
-                    <p className="text-xs text-muted mt-1 font-sans italic">"{msg.message}"</p>
+                    <p className="text-xs text-muted mt-1 font-sans italic">&quot;{msg.message}&quot;</p>
                   </div>
 
                   <button

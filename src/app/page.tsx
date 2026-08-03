@@ -8,13 +8,10 @@ import {
   Play,
   Disc,
   ArrowRight,
-  Music,
   Heart,
-  MessageSquare,
   Sparkles,
   ExternalLink,
   ChevronRight,
-  Activity,
 } from 'lucide-react';
 import { MINI_EP_INFO, MOCK_TRACKS, MOCK_FAN_MESSAGES, MOCK_GALLERY } from '@/lib/audio/mockTracks';
 import { useAudioStore } from '@/stores/useAudioStore';
@@ -23,7 +20,7 @@ import { AudioVisualizer } from '@/components/audio/AudioVisualizer';
 import { PageTransition } from '@/components/layout/PageTransition';
 
 export default function HomePage() {
-  const { playTrack, isPlaying, togglePlay } = useAudioStore();
+  const { playTrack, isPlaying } = useAudioStore();
 
   return (
     <PageTransition>
@@ -273,7 +270,7 @@ export default function HomePage() {
                   </span>
                 </div>
                 <p className="text-xs text-muted leading-relaxed italic">
-                  "{msg.message}"
+                  &quot;{msg.message}&quot;
                 </p>
                 <div className="flex items-center gap-1.5 text-xs text-accent pt-1">
                   <Heart className="w-3.5 h-3.5 fill-current" />

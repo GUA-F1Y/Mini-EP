@@ -12,10 +12,8 @@ import {
   Shuffle,
   Repeat,
   FileText,
-  Activity,
   ChevronDown,
   ChevronUp,
-  X,
 } from 'lucide-react';
 import { useAudioStore } from '@/stores/useAudioStore';
 import { useHowlerPlayer } from '@/hooks/useHowlerPlayer';

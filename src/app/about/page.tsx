@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { User, Disc, Sliders, Shield, Award, Sparkles } from 'lucide-react';
+import { User, Sliders } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 
 export default function AboutPage() {

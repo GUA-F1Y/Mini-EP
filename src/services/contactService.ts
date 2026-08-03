@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
+import { TablesInsert } from '@/lib/supabase/types';
 
 export interface ContactInput {
   name: string;
@@ -16,14 +17,16 @@ export const contactService = {
     }
 
     try {
-      const { error } = await supabase.from('contact_submissions').insert({
+      const submission: TablesInsert<'contact_submissions'> = {
         name: input.name,
         email: input.email,
         subject: input.subject,
         message: input.message,
         type: input.type,
         status: 'Pending',
-      });
+      };
+
+      const { error } = await supabase.from('contact_submissions').insert(submission);
 
       if (error) {
         console.error('Error submitting contact form to Supabase:', error);
@@ -36,3 +39,4 @@ export const contactService = {
     }
   },
 };
+

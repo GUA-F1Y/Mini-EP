@@ -11,7 +11,6 @@ export function useHowlerPlayer() {
     isPlaying,
     volume,
     isMuted,
-    currentTime,
     seek,
     nextTrack,
     setCurrentTime,
@@ -23,9 +22,16 @@ export function useHowlerPlayer() {
   const animFrameRef = useRef<number | null>(null);
   const currentTrack = tracks[currentTrackIndex];
 
+  // Callback refs to maintain stable effect dependencies
+  const cbRef = useRef({ nextTrack, setDuration, setIsPlaying, currentTrack, volume, isMuted, isPlaying });
+  useEffect(() => {
+    cbRef.current = { nextTrack, setDuration, setIsPlaying, currentTrack, volume, isMuted, isPlaying };
+  });
+
   // Initialize and handle track change
   useEffect(() => {
-    if (!currentTrack) return;
+    const activeTrack = cbRef.current.currentTrack;
+    if (!activeTrack) return;
 
     // Clean up previous howl
     if (soundRef.current) {
@@ -34,23 +40,23 @@ export function useHowlerPlayer() {
     }
 
     const sound = new Howl({
-      src: [currentTrack.audioUrl],
+      src: [activeTrack.audioUrl],
       html5: true, // enables streaming for long audio files
-      volume: isMuted ? 0 : volume,
+      volume: cbRef.current.isMuted ? 0 : cbRef.current.volume,
       onplay: () => {
-        setIsPlaying(true);
+        cbRef.current.setIsPlaying(true);
         if (soundRef.current) {
-          setDuration(soundRef.current.duration() || currentTrack.duration);
+          cbRef.current.setDuration(soundRef.current.duration() || activeTrack.duration);
         }
       },
-      onpause: () => setIsPlaying(false),
-      onstop: () => setIsPlaying(false),
+      onpause: () => cbRef.current.setIsPlaying(false),
+      onstop: () => cbRef.current.setIsPlaying(false),
       onend: () => {
-        nextTrack();
+        cbRef.current.nextTrack();
       },
       onload: () => {
         if (soundRef.current) {
-          setDuration(soundRef.current.duration());
+          cbRef.current.setDuration(soundRef.current.duration());
         }
       },
       onloaderror: (_id, error) => {
@@ -60,7 +66,7 @@ export function useHowlerPlayer() {
 
     soundRef.current = sound;
 
-    if (isPlaying) {
+    if (cbRef.current.isPlaying) {
       sound.play();
     }
 
