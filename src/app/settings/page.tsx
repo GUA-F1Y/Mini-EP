@@ -3,12 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import {
   Settings, Trash2, Download, Wifi, WifiOff, Moon,
-  HardDrive, RefreshCw, CheckCircle2,
+  HardDrive, RefreshCw, CheckCircle2, Smartphone, Share, PlusSquare,
 } from 'lucide-react';
 import { useAudioStore } from '@/stores/useAudioStore';
 import { useToastStore } from '@/stores/useToastStore';
 import { offlineCacheManager } from '@/lib/audio/offlineCache';
 import { PageTransition } from '@/components/layout/PageTransition';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 export default function SettingsPage() {
   const { tracks, offlineTrackIds, refreshOfflineTracks, toggleOfflineTrack } = useAudioStore();
@@ -18,6 +23,12 @@ export default function SettingsPage() {
   const [isClearing, setIsClearing] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+
+  // PWA Installation State
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
 
   useEffect(() => {
     setIsOnline(navigator.onLine);
@@ -30,9 +41,29 @@ export default function SettingsPage() {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReducedMotion(mq.matches);
 
+    // Check if app is already running as installed PWA (standalone)
+    const isStandaloneMode =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      ('standalone' in navigator && (navigator as unknown as { standalone: boolean }).standalone === true);
+    setIsStandalone(Boolean(isStandaloneMode));
+
+    // Detect iOS
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
+    setIsIOS(isIosDevice);
+
+    // Listen for beforeinstallprompt
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
     return () => {
       window.removeEventListener('online', onOnline);
       window.removeEventListener('offline', onOffline);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
   }, [addToast]);
 
@@ -40,6 +71,44 @@ export default function SettingsPage() {
     offlineCacheManager.getCacheSize().then(({ formattedSize }) => setCacheSize(formattedSize));
     refreshOfflineTracks();
   }, [refreshOfflineTracks]);
+
+  const handleInstallApp = async () => {
+    if (!deferredPrompt) {
+      if (isIOS) {
+        addToast({
+          message: 'To install on iOS: Tap Share in Safari, then "Add to Home Screen"',
+          type: 'info',
+          duration: 6000,
+        });
+      } else if (isStandalone) {
+        addToast({ message: 'App is already installed!', type: 'success' });
+      } else {
+        addToast({
+          message: 'Tap your browser menu (⋮) and select "Install app" or "Add to Home Screen"',
+          type: 'info',
+          duration: 5000,
+        });
+      }
+      return;
+    }
+
+    setIsInstalling(true);
+    try {
+      await deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        addToast({ message: 'Installing GUAF1Y App…', type: 'success' });
+        setIsStandalone(true);
+        setDeferredPrompt(null);
+      } else {
+        addToast({ message: 'Installation cancelled', type: 'info' });
+      }
+    } catch (err) {
+      console.warn('[PWA Install Error]:', err);
+    } finally {
+      setIsInstalling(false);
+    }
+  };
 
   const handleClearCache = async () => {
     setIsClearing(true);
@@ -74,9 +143,75 @@ export default function SettingsPage() {
             SETTINGS
           </h1>
           <p className="text-muted text-sm">
-            Manage offline storage, cache, preferences and app configuration.
+            Manage offline storage, cache, app installation, and preferences.
           </p>
         </div>
+
+        {/* ─── DOWNLOAD / INSTALL PWA SECTION ─── */}
+        <section className="space-y-3">
+          <h2 className="text-xs font-mono text-accent uppercase tracking-widest">
+            Mobile & Desktop Application
+          </h2>
+
+          <div className="p-6 rounded-2xl bg-secondary/50 border border-surface space-y-5 shadow-xl">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-surface border border-accent/30 flex items-center justify-center text-accent shrink-0 shadow-lg shadow-accent/5">
+                  <Smartphone className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-foreground text-base">GUAF1Y Web App</h3>
+                    {isStandalone && (
+                      <span className="px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-[10px] font-mono font-bold uppercase">
+                        INSTALLED
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted mt-0.5">
+                    Install for offline listening, fullscreen portal view, and home screen launch.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {isStandalone ? (
+              <div className="p-3.5 rounded-xl bg-accent/10 border border-accent/30 flex items-center gap-2.5 text-xs text-accent font-mono">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>App is installed on this device. You can launch it directly from your Home Screen.</span>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <button
+                  onClick={handleInstallApp}
+                  disabled={isInstalling}
+                  className="w-full py-4 rounded-xl bg-accent text-background font-bold font-mono text-xs hover:bg-accent-hover transition-all flex items-center justify-center gap-2.5 shadow-xl shadow-accent/20 active:scale-[0.99] min-h-[44px]"
+                  aria-label="Download and install GUAF1Y App offline"
+                >
+                  <Download className="w-4.5 h-4.5" />
+                  {deferredPrompt
+                    ? 'INSTALL GUAF1Y APP (OFFLINE)'
+                    : 'DOWNLOAD & INSTALL APP'}
+                </button>
+
+                {/* iOS Instructions hint if on Apple Safari */}
+                {isIOS && (
+                  <div className="p-3.5 rounded-xl bg-surface/80 border border-surface text-xs text-muted space-y-1.5 font-mono">
+                    <div className="flex items-center gap-2 text-foreground font-semibold">
+                      <Share className="w-4 h-4 text-accent" />
+                      iOS Safari Installation Instructions:
+                    </div>
+                    <ol className="list-decimal list-inside space-y-1 text-[11px] text-muted/90 pl-1">
+                      <li>Tap the <span className="text-foreground font-semibold">Share</span> button at the bottom of Safari</li>
+                      <li>Scroll down and tap <span className="text-foreground font-semibold">Add to Home Screen</span> (<PlusSquare className="w-3.5 h-3.5 inline mx-0.5 text-accent" />)</li>
+                      <li>Launch <span className="text-foreground font-semibold">GUAF1Y</span> directly from your home screen!</li>
+                    </ol>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
 
         {/* Connection Status */}
         <section className="space-y-3">
@@ -224,8 +359,8 @@ export default function SettingsPage() {
               <span className="font-mono text-foreground">JERSEY_MU..</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted">PWA</span>
-              <span className="font-mono text-accent">ENABLED</span>
+              <span className="text-muted">PWA Status</span>
+              <span className="font-mono text-accent">{isStandalone ? 'INSTALLED (STANDALONE)' : 'ENABLED'}</span>
             </div>
           </div>
         </section>
