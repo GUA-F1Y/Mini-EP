@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', sans-serif;
+    --font-syne: 'Syne', sans-serif;
+    /* Safe area insets for devices with notch / home indicator */
+    --sai-bottom: env(safe-area-inset-bottom, 0px);
+    --sai-top: env(safe-area-inset-top, 0px);
+  }
+
+  html {
+    /* Prevent text size inflation on mobile after orientation change */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: #090909;
+    color: #FFFFFF;
+    font-family: var(--font-inter);
+    overflow-x: hidden;
+    /* Smooth scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Minimum touch target size (WCAG 2.1 AA) */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Remove iOS tap highlight */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Custom subtle scrollbar (desktop only) */
+  @media (min-width: 768px) {
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090909;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1A1A1A;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D4AF37;
+    }
+  }
+}
+
+/* Luxury Noise Background Texture Overlay */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Custom Glassmorphism Utility */
+.glass-card {
+  background: rgba(26, 26, 26, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Bottom safe-area padding for persistent player bar */
+.player-safe-bottom {
+  padding-bottom: calc(80px + var(--sai-bottom));
+}
+
+/* Scrollbar hide utility */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile full-screen overlay transition */
+.mobile-player-sheet {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.3s ease;
+}
+
+/* Prevent body scroll when mobile player is expanded */
+body.player-expanded {
+  overflow: hidden;
+}
