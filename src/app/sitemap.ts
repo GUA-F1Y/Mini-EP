@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/about',
     '/contact',
     '/credits',
+    '/settings',
   ];
 
   return routes.map((route) => ({

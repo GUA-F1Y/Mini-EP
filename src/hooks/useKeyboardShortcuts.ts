@@ -9,6 +9,8 @@ export function useKeyboardShortcuts() {
     toggleMute,
     nextTrack,
     prevTrack,
+    toggleShuffle,
+    cycleRepeatMode,
     currentTime,
     duration,
     seek,
@@ -16,7 +18,7 @@ export function useKeyboardShortcuts() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger shortcuts when user is typing in input or textarea fields
+      // Don't trigger shortcuts when user is typing
       const target = e.target as HTMLElement;
       if (
         target &&
@@ -45,6 +47,14 @@ export function useKeyboardShortcuts() {
           e.preventDefault();
           prevTrack();
           break;
+        case 'KeyS':
+          e.preventDefault();
+          toggleShuffle();
+          break;
+        case 'KeyR':
+          e.preventDefault();
+          cycleRepeatMode();
+          break;
         case 'ArrowRight':
           e.preventDefault();
           seek(Math.min(duration, currentTime + 5));
@@ -58,5 +68,5 @@ export function useKeyboardShortcuts() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [togglePlay, toggleMute, nextTrack, prevTrack, currentTime, duration, seek]);
+  }, [togglePlay, toggleMute, nextTrack, prevTrack, toggleShuffle, cycleRepeatMode, currentTime, duration, seek]);
 }

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Send, Check, ShieldCheck, MapPin, Globe } from 'lucide-react';
+import { Mail, Send, Check, ShieldCheck, MapPin, Globe, Loader2 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { contactService } from '@/services/contactService';
+import { useToastStore } from '@/stores/useToastStore';
 
 export default function ContactPage() {
   const [form, setForm] = useState({
@@ -16,6 +17,7 @@ export default function ContactPage() {
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { addToast } = useToastStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +29,9 @@ export default function ContactPage() {
     if (success) {
       setSubmitted(true);
       setForm({ name: '', email: '', subject: '', type: 'Booking', message: '' });
+      addToast({ message: 'Inquiry submitted! We\'ll be in touch within 48h.', type: 'success', duration: 5000 });
+    } else {
+      addToast({ message: 'Failed to send inquiry. Please try again.', type: 'error' });
     }
   };
 
@@ -204,8 +209,10 @@ export default function ContactPage() {
                   disabled={loading}
                   className="w-full py-4 rounded-xl bg-accent text-background font-bold font-mono text-xs hover:bg-accent-hover transition-colors flex items-center justify-center gap-2 shadow-lg shadow-accent/20 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-4 h-4" />
-                  {loading ? 'TRANSMITTING TO SUPABASE...' : 'SUBMIT OFFICIAL INQUIRY'}
+                  {loading
+                    ? <><Loader2 className="w-4 h-4 animate-spin" /> TRANSMITTING…</>
+                    : <><Send className="w-4 h-4" /> SUBMIT OFFICIAL INQUIRY</>
+                  }
                 </button>
               </form>
             )}

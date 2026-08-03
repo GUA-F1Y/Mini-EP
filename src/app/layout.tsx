@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { PersistentPlayer } from '@/components/audio/PersistentPlayer';
 import { IntroScreen } from '@/components/layout/IntroScreen';
+import { ToastContainer } from '@/components/ui/ToastContainer';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -116,6 +117,7 @@ export default function RootLayout({
         <main className="flex-1 w-full pb-24 sm:pb-28">{children}</main>
         <Footer />
         <PersistentPlayer />
+        <ToastContainer />
       </body>
     </html>
   );

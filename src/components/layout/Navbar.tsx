@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Disc, Menu, X, Volume2, ShieldCheck } from 'lucide-react';
+import { Disc, Menu, X, Volume2, ShieldCheck, Settings } from 'lucide-react';
 import { useAudioStore } from '@/stores/useAudioStore';
 
 const NAV_LINKS = [
@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { href: '/about', label: 'ABOUT' },
   { href: '/contact', label: 'CONTACT' },
   { href: '/credits', label: 'CREDITS' },
+  { href: '/settings', label: 'SETTINGS' },
 ];
 
 export const Navbar: React.FC = () => {
@@ -96,11 +97,22 @@ export const Navbar: React.FC = () => {
             </span>
           </button>
 
+          {/* Settings link */}
+          <Link
+            href="/settings"
+            className="hidden sm:flex p-2 text-muted hover:text-accent transition-colors rounded-lg hover:bg-surface"
+            title="Settings"
+            aria-label="Settings"
+          >
+            <Settings className="w-4 h-4" />
+          </Link>
+
           {/* Admin link */}
           <Link
             href="/admin"
             className="hidden sm:flex p-2 text-muted hover:text-accent transition-colors rounded-lg hover:bg-surface"
             title="Admin Portal"
+            aria-label="Admin Portal"
           >
             <ShieldCheck className="w-4 h-4" />
           </Link>

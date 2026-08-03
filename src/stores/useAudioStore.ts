@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { Track } from '@/types';
 import { MOCK_TRACKS } from '@/lib/audio/mockTracks';
+import { offlineCacheManager } from '@/lib/audio/offlineCache';
+
+export type RepeatMode = 'none' | 'all' | 'one';
 
 interface AudioState {
   tracks: Track[];
@@ -11,9 +14,12 @@ interface AudioState {
   currentTime: number;
   duration: number;
   isShuffle: boolean;
-  isRepeat: boolean;
+  repeatMode: RepeatMode;
+  playbackRate: number;
   visualizerMode: 'bars' | 'wave' | 'circle';
   isLyricsOpen: boolean;
+  isSettingsOpen: boolean;
+  offlineTrackIds: string[];
   
   // Actions
   setTracks: (tracks: Track[]) => void;
@@ -27,12 +33,17 @@ interface AudioState {
   setVolume: (volume: number) => void;
   toggleMute: () => void;
   toggleShuffle: () => void;
-  toggleRepeat: () => void;
+  cycleRepeatMode: () => void;
+  setPlaybackRate: (rate: number) => void;
   setVisualizerMode: (mode: 'bars' | 'wave' | 'circle') => void;
   setLyricsOpen: (open: boolean) => void;
   toggleLyrics: () => void;
+  setSettingsOpen: (open: boolean) => void;
+  toggleSettings: () => void;
   setCurrentTime: (time: number) => void;
   setDuration: (duration: number) => void;
+  toggleOfflineTrack: (track: Track) => Promise<boolean>;
+  refreshOfflineTracks: () => Promise<void>;
 }
 
 export const useAudioStore = create<AudioState>((set, get) => ({
@@ -44,9 +55,12 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   currentTime: 0,
   duration: 0,
   isShuffle: false,
-  isRepeat: false,
+  repeatMode: 'none',
+  playbackRate: 1.0,
   visualizerMode: 'bars',
   isLyricsOpen: false,
+  isSettingsOpen: false,
+  offlineTrackIds: [],
 
   setTracks: (tracks) => set({ tracks }),
   
@@ -68,10 +82,10 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   setIsPlaying: (playing) => set({ isPlaying: playing }),
 
   nextTrack: () => {
-    const { currentTrackIndex, tracks, isShuffle, isRepeat } = get();
+    const { currentTrackIndex, tracks, isShuffle, repeatMode } = get();
     if (tracks.length === 0) return;
     
-    if (isRepeat) {
+    if (repeatMode === 'one') {
       set({ currentTime: 0, isPlaying: true });
       return;
     }
@@ -81,6 +95,10 @@ export const useAudioStore = create<AudioState>((set, get) => ({
       nextIdx = Math.floor(Math.random() * tracks.length);
     } else {
       nextIdx = (currentTrackIndex + 1) % tracks.length;
+      if (nextIdx === 0 && repeatMode === 'none') {
+        set({ isPlaying: false, currentTime: 0 });
+        return;
+      }
     }
 
     set({ currentTrackIndex: nextIdx, currentTime: 0, isPlaying: true });
@@ -90,7 +108,6 @@ export const useAudioStore = create<AudioState>((set, get) => ({
     const { currentTrackIndex, tracks, currentTime } = get();
     if (tracks.length === 0) return;
 
-    // If played more than 3 seconds, restart current track
     if (currentTime > 3) {
       set({ currentTime: 0 });
       return;
@@ -108,7 +125,14 @@ export const useAudioStore = create<AudioState>((set, get) => ({
 
   toggleShuffle: () => set((state) => ({ isShuffle: !state.isShuffle })),
 
-  toggleRepeat: () => set((state) => ({ isRepeat: !state.isRepeat })),
+  cycleRepeatMode: () => set((state) => {
+    const modes: RepeatMode[] = ['none', 'all', 'one'];
+    const currentIdx = modes.indexOf(state.repeatMode);
+    const nextMode = modes[(currentIdx + 1) % modes.length];
+    return { repeatMode: nextMode };
+  }),
+
+  setPlaybackRate: (rate) => set({ playbackRate: rate }),
 
   setVisualizerMode: (visualizerMode) => set({ visualizerMode }),
 
@@ -116,7 +140,38 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   
   toggleLyrics: () => set((state) => ({ isLyricsOpen: !state.isLyricsOpen })),
 
+  setSettingsOpen: (isSettingsOpen) => set({ isSettingsOpen }),
+
+  toggleSettings: () => set((state) => ({ isSettingsOpen: !state.isSettingsOpen })),
+
   setCurrentTime: (currentTime) => set({ currentTime }),
 
   setDuration: (duration) => set({ duration }),
+
+  toggleOfflineTrack: async (track: Track) => {
+    const { offlineTrackIds } = get();
+    const isCached = offlineTrackIds.includes(track.id);
+
+    if (isCached) {
+      await offlineCacheManager.removeTrackAudio(track.audioUrl);
+      set({ offlineTrackIds: offlineTrackIds.filter((id) => id !== track.id) });
+      return false;
+    } else {
+      const success = await offlineCacheManager.cacheTrackAudio(track.audioUrl);
+      if (success) {
+        set({ offlineTrackIds: [...offlineTrackIds, track.id] });
+      }
+      return success;
+    }
+  },
+
+  refreshOfflineTracks: async () => {
+    const { tracks } = get();
+    const cachedIds: string[] = [];
+    for (const track of tracks) {
+      const isCached = await offlineCacheManager.isTrackCached(track.audioUrl);
+      if (isCached) cachedIds.push(track.id);
+    }
+    set({ offlineTrackIds: cachedIds });
+  },
 }));

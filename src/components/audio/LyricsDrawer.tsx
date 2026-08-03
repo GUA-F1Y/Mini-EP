@@ -48,7 +48,8 @@ export const LyricsDrawer: React.FC = () => {
             </div>
             <button
               onClick={() => setLyricsOpen(false)}
-              className="p-2 rounded-lg bg-surface/50 text-muted hover:text-foreground transition-colors"
+              className="p-2 rounded-lg bg-surface/50 text-muted hover:text-foreground transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Close lyrics panel"
             >
               <X className="w-5 h-5" />
             </button>
@@ -61,6 +62,7 @@ export const LyricsDrawer: React.FC = () => {
                 src={currentTrack.coverUrl}
                 alt={currentTrack.title}
                 fill
+                sizes="64px"
                 className="object-cover"
               />
             </div>

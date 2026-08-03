@@ -11,6 +11,7 @@ export function useHowlerPlayer() {
     isPlaying,
     volume,
     isMuted,
+    playbackRate,
     seek,
     nextTrack,
     setCurrentTime,
@@ -23,9 +24,18 @@ export function useHowlerPlayer() {
   const currentTrack = tracks[currentTrackIndex];
 
   // Callback refs to maintain stable effect dependencies
-  const cbRef = useRef({ nextTrack, setDuration, setIsPlaying, currentTrack, volume, isMuted, isPlaying });
+  const cbRef = useRef({
+    nextTrack,
+    setDuration,
+    setIsPlaying,
+    currentTrack,
+    volume,
+    isMuted,
+    isPlaying,
+    playbackRate,
+  });
   useEffect(() => {
-    cbRef.current = { nextTrack, setDuration, setIsPlaying, currentTrack, volume, isMuted, isPlaying };
+    cbRef.current = { nextTrack, setDuration, setIsPlaying, currentTrack, volume, isMuted, isPlaying, playbackRate };
   });
 
   // Initialize and handle track change
@@ -41,8 +51,9 @@ export function useHowlerPlayer() {
 
     const sound = new Howl({
       src: [activeTrack.audioUrl],
-      html5: true, // enables streaming for long audio files
+      html5: true,
       volume: cbRef.current.isMuted ? 0 : cbRef.current.volume,
+      rate: cbRef.current.playbackRate,
       onplay: () => {
         cbRef.current.setIsPlaying(true);
         if (soundRef.current) {
@@ -96,6 +107,12 @@ export function useHowlerPlayer() {
     soundRef.current.volume(isMuted ? 0 : volume);
     Howler.volume(isMuted ? 0 : volume);
   }, [volume, isMuted]);
+
+  // Handle playback rate changes
+  useEffect(() => {
+    if (!soundRef.current) return;
+    soundRef.current.rate(playbackRate);
+  }, [playbackRate]);
 
   // Handle position tracking loop
   useEffect(() => {
